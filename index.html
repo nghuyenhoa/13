@@ -1,25 +1,61 @@
-import fetch from "node-fetch";
-import * as cheerio from "cheerio";
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tin tức vàng mới nhất</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h2 { color: #d4af37; }
+    .news { margin-bottom: 20px; padding: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .time { color: gray; font-size: 0.9em; }
+    a { text-decoration: none; color: #0066cc; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h2>🟡 Tin tức vàng mới nhất</h2>
+  <div id="gold-news"></div>
 
-const URL = "https://www.fxstreet-vn.com/markets/commodities/metals/gold";
+  <script>
+    async function fetchNews() {
+      const sources = [
+        "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.fxstreet-vn.com/markets/commodities/metals/gold"),
+        "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.fxstreet-vn.com/news?q=v%C3%A0ng&hPP=20&idx=FxsIndexPro&p=0&Category=News")
+      ];
 
-async function getGoldNews() {
-  const res = await fetch(URL);
-  const html = await res.text();
-  const $ = cheerio.load(html);
+      let container = document.getElementById("gold-news");
+      container.innerHTML = "";
 
-  let news = [];
-  $(".fxs_entry").each((i, el) => {
-    if (i < 3) {
-      news.push({
-        title: $(el).find(".fxs_headline").text().trim(),
-        link: "https://www.fxstreet-vn.com" + $(el).find("a").attr("href"),
-        time: $(el).find("time").text().trim()
-      });
+      for (let url of sources) {
+        try {
+          let res = await fetch(url);
+          let data = await res.json();
+          let html = data.contents;
+
+          // lấy thẻ đầu tiên có class headline
+          let match = html.match(/<a[^>]*>(.*?)<\/a>/i);
+          let time = html.match(/<time[^>]*>(.*?)<\/time>/i);
+
+          if (match) {
+            let title = match[1].replace(/<[^>]+>/g, "").trim();
+            let linkMatch = match[0].match(/href="([^"]+)"/);
+            let link = linkMatch ? linkMatch[1] : "#";
+
+            container.innerHTML += `
+              <div class="news">
+                <a href="${link}" target="_blank">${title}</a>
+                <div class="time">${time ? time[1] : ""}</div>
+              </div>
+            `;
+          }
+        } catch (err) {
+          console.error("Lỗi tải:", err);
+        }
+      }
     }
-  });
 
-  return news;
-}
-
-getGoldNews().then(data => console.log(data));
+    fetchNews();
+    setInterval(fetchNews, 120000); // reset sau 2 phút
+  </script>
+</body>
+</html>
