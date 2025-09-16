@@ -26,21 +26,18 @@
         let data = await resp.json();
         let items = data.items || [];
 
-        // Lọc tin vàng
+        // 🔎 Lọc tin vàng
         let goldNews = items.filter(item => {
           const t = item.title.toLowerCase();
           return t.includes("vàng") || t.includes("xau") || t.includes("gold");
         });
 
-        // Nếu ít hơn 3, lấy thêm tin khác trong feed để đủ 3
-        if (goldNews.length < 3) {
-          const extra = items.filter(it => !goldNews.includes(it));
-          goldNews = goldNews.concat(extra).slice(0, 3);
-        }
+        // Chỉ lấy tối đa 3 tin
+        goldNews = goldNews.slice(0, 3);
 
         const container = document.getElementById("news");
         if (goldNews.length === 0) {
-          container.innerHTML = "<p>Không tìm thấy tin nào!</p>";
+          container.innerHTML = "<p>Không tìm thấy tin vàng nào!</p>";
           return;
         }
 
