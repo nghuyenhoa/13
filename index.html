@@ -2,55 +2,48 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tin tức vàng mới nhất</title>
+  <title>Tin tức vàng từ RSS</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #fafafa; }
     h2 { color: #d4af37; }
-    .news { margin-bottom: 20px; padding: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .time { color: gray; font-size: 0.9em; }
-    a { text-decoration: none; color: #0066cc; }
+    .news { margin-bottom: 20px; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .time { font-size: 0.9em; color: gray; margin-top: 4px; }
+    a { text-decoration: none; color: #0066cc; font-weight: bold; }
     a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <h2>🟡 Tin tức vàng mới nhất</h2>
+  <h2>🟡 Tin tức vàng (XAU/USD)</h2>
   <div id="gold-news"></div>
 
   <script>
+    const RSS_URL = "https://api.rss2json.com/v1/api.json?rss_url=https://www.fxstreet.com/rss/news";
+    const KEYWORDS = ["xau", "gold", "vàng"];
+
     async function fetchNews() {
-      const sources = [
-        "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.fxstreet-vn.com/markets/commodities/metals/gold"),
-        "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.fxstreet-vn.com/news?q=v%C3%A0ng&hPP=20&idx=FxsIndexPro&p=0&Category=News")
-      ];
+      let res = await fetch(RSS_URL);
+      let data = await res.json();
+      let items = data.items || [];
+
+      // lọc tin vàng
+      let goldNews = items.filter(item =>
+        KEYWORDS.some(k => item.title.toLowerCase().includes(k) || item.description.toLowerCase().includes(k))
+      ).slice(0, 3); // lấy 3 tin mới nhất
 
       let container = document.getElementById("gold-news");
       container.innerHTML = "";
 
-      for (let url of sources) {
-        try {
-          let res = await fetch(url);
-          let data = await res.json();
-          let html = data.contents;
-
-          // lấy thẻ đầu tiên có class headline
-          let match = html.match(/<a[^>]*>(.*?)<\/a>/i);
-          let time = html.match(/<time[^>]*>(.*?)<\/time>/i);
-
-          if (match) {
-            let title = match[1].replace(/<[^>]+>/g, "").trim();
-            let linkMatch = match[0].match(/href="([^"]+)"/);
-            let link = linkMatch ? linkMatch[1] : "#";
-
-            container.innerHTML += `
-              <div class="news">
-                <a href="${link}" target="_blank">${title}</a>
-                <div class="time">${time ? time[1] : ""}</div>
-              </div>
-            `;
-          }
-        } catch (err) {
-          console.error("Lỗi tải:", err);
-        }
+      if (goldNews.length === 0) {
+        container.innerHTML = "<p>⏳ Hiện chưa có tin XAU/USD mới.</p>";
+      } else {
+        goldNews.forEach(n => {
+          container.innerHTML += `
+            <div class="news">
+              <a href="${n.link}" target="_blank">${n.title}</a>
+              <div class="time">${new Date(n.pubDate).toLocaleString("vi-VN")}</div>
+            </div>
+          `;
+        });
       }
     }
 
