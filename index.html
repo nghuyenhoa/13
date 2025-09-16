@@ -14,7 +14,7 @@
   </style>
 </head>
 <body>
-  <header>Tin tức XAU/USD từ FXStreet-VN</header>
+  <header>3 Tin tức mới nhất về Vàng (XAU/USD)</header>
   <div class="container" id="news">Đang tải...</div>
 
   <script>
@@ -24,19 +24,28 @@
       try {
         let resp = await fetch(api);
         let data = await resp.json();
-        const items = data.items || [];
-        // Lọc các bài có vàng hoặc XAU
-        const filtered = items.filter(item => {
+        let items = data.items || [];
+
+        // Lọc tin vàng
+        let goldNews = items.filter(item => {
           const t = item.title.toLowerCase();
           return t.includes("vàng") || t.includes("xau") || t.includes("gold");
         });
+
+        // Nếu ít hơn 3, lấy thêm tin khác trong feed để đủ 3
+        if (goldNews.length < 3) {
+          const extra = items.filter(it => !goldNews.includes(it));
+          goldNews = goldNews.concat(extra).slice(0, 3);
+        }
+
         const container = document.getElementById("news");
-        if (filtered.length === 0) {
-          container.innerHTML = "<p>Không có tin XAU/USD mới nào từ FXStreet-VN trong feed.</p>";
+        if (goldNews.length === 0) {
+          container.innerHTML = "<p>Không tìm thấy tin nào!</p>";
           return;
         }
+
         let html = "";
-        filtered.slice(0, 3).forEach(item => {   // 👉 chỉ lấy 3 tin mới nhất
+        goldNews.forEach(item => {
           html += `
             <div class="news">
               <a href="${item.link}" target="_blank">${item.title}</a>
@@ -45,6 +54,7 @@
             </div>
           `;
         });
+
         container.innerHTML = html;
       } catch (err) {
         console.error(err);
