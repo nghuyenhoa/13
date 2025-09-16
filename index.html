@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tin tức vàng (VN)</title>
+  <title>Tin tức vàng</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background: #fafafa; }
     .news { margin-bottom: 20px; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -12,53 +12,41 @@
   </style>
 </head>
 <body>
-  <div id="gold-news">⏳ Đang tải tin...</div>
+  <div id="gold-news"></div>
 
   <script>
-    const URL = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.fxstreet-vn.com/markets/commodities/metals/gold");
+    const RSS_URL = "https://api.rss2json.com/v1/api.json?rss_url=https://www.fxstreet.com/rss/news";
+    const KEYWORDS = ["xau", "gold", "vàng"];
 
     async function fetchNews() {
-      try {
-        let res = await fetch(URL);
-        let data = await res.json();
-        let html = data.contents;
+      let res = await fetch(RSS_URL);
+      let data = await res.json();
+      let items = data.items || [];
 
-        // tìm tin (thẻ article hoặc div chứa tiêu đề)
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(html, "text/html");
-        let articles = doc.querySelectorAll(".fxs_entry"); // class của tin bài
+      // lọc tin vàng
+      let goldNews = items.filter(item =>
+        KEYWORDS.some(k => item.title.toLowerCase().includes(k) || item.description.toLowerCase().includes(k))
+      ).slice(0, 4); // 🔥 lấy 4 tin mới nhất
 
-        let container = document.getElementById("gold-news");
-        container.innerHTML = "";
+      let container = document.getElementById("gold-news");
+      container.innerHTML = "";
 
-        articles.forEach((el, i) => {
-          if (i < 3) { // lấy 3 tin đầu
-            let titleEl = el.querySelector(".fxs_headline a");
-            let timeEl = el.querySelector("time");
-            let title = titleEl ? titleEl.textContent.trim() : "Không có tiêu đề";
-            let link = titleEl ? "https://www.fxstreet-vn.com" + titleEl.getAttribute("href") : "#";
-            let time = timeEl ? timeEl.textContent.trim() : "";
-
-            container.innerHTML += `
-              <div class="news">
-                <a href="${link}" target="_blank">${title}</a>
-                <div class="time">${time}</div>
-              </div>
-            `;
-          }
+      if (goldNews.length === 0) {
+        container.innerHTML = "<p>⏳ Hiện chưa có tin XAU/USD mới.</p>";
+      } else {
+        goldNews.forEach(n => {
+          container.innerHTML += `
+            <div class="news">
+              <a href="${n.link}" target="_blank">${n.title}</a>
+              <div class="time">${new Date(n.pubDate).toLocaleString("vi-VN")}</div>
+            </div>
+          `;
         });
-
-        if (container.innerHTML === "") {
-          container.innerHTML = "<p>❌ Không lấy được tin.</p>";
-        }
-      } catch (err) {
-        console.error(err);
-        document.getElementById("gold-news").innerHTML = "<p>⚠️ Lỗi khi tải tin.</p>";
       }
     }
 
     fetchNews();
-    setInterval(fetchNews, 120000); // 2 phút reload
+    setInterval(fetchNews, 120000); // reset sau 2 phút
   </script>
 </body>
 </html>
