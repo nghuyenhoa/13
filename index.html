@@ -2,105 +2,56 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tin tức Vàng từ FXStreet</title>
+  <title>Tin tức XAU/USD từ FXStreet-VN</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #222;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-    }
-    .news {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: flex-start;
-    }
-    .news img {
-      max-width: 120px;
-      margin-right: 15px;
-      border-radius: 5px;
-    }
-    .news a {
-      text-decoration: none;
-      color: #0077cc;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .news a:hover {
-      color: #ff6600;
-    }
-    .date {
-      font-size: 12px;
-      color: #666;
-      margin-top: 5px;
-    }
-    .desc {
-      font-size: 14px;
-      color: #444;
-      margin-top: 10px;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    header { background: #222; color: #fff; padding: 15px; text-align: center; font-size: 22px; }
+    .container { max-width: 900px; margin: auto; padding: 20px; }
+    .news { background: #fff; margin-bottom: 15px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .news a { font-size: 18px; color: #0077cc; text-decoration: none; font-weight: bold; }
+    .date { font-size: 12px; color: #666; margin-top: 5px; }
+    .desc { font-size: 14px; color: #444; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <header>Tin tức Vàng từ FXStreet</header>
-  <div class="container" id="news"></div>
+  <header>Tin tức XAU/USD từ FXStreet-VN</header>
+  <div class="container" id="news">Đang tải...</div>
 
   <script>
-    const rssUrl = "https://www.fxstreet.com/rss/news";
-    const apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
-
-    fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
+    async function loadXAUNews() {
+      const rssUrl = "https://www.fxstreet-vn.com/rss/news";
+      const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+      try {
+        let resp = await fetch(api);
+        let data = await resp.json();
+        const items = data.items || [];
+        // Lọc các bài có vàng hoặc XAU
+        const filtered = items.filter(item => {
+          const t = item.title.toLowerCase();
+          return t.includes("vàng") || t.includes("xau") || t.includes("gold");
+        });
         const container = document.getElementById("news");
-        let html = "";
-
-        const goldNews = data.items.filter(item => 
-          item.title.toLowerCase().includes("gold") || 
-          item.title.toUpperCase().includes("XAU")
-        );
-
-        if (goldNews.length === 0) {
-          container.innerHTML = "<p>Không có tin tức về vàng!</p>";
+        if (filtered.length === 0) {
+          container.innerHTML = "<p>Không có tin XAU/USD mới nào từ FXStreet-VN trong feed.</p>";
           return;
         }
-
-        goldNews.slice(0, 10).forEach(item => {
+        let html = "";
+        filtered.slice(0, 10).forEach(item => {
           html += `
             <div class="news">
-              ${item.thumbnail ? `<img src="${item.thumbnail}" alt="thumbnail">` : ""}
-              <div>
-                <a href="${item.link}" target="_blank">${item.title}</a>
-                <div class="date">${new Date(item.pubDate).toLocaleString("vi-VN")}</div>
-                <div class="desc">${item.description || "Không có mô tả."}</div>
-              </div>
+              <a href="${item.link}" target="_blank">${item.title}</a>
+              <div class="date">${new Date(item.pubDate).toLocaleString("vi-VN")}</div>
+              <div class="desc">${item.description?.slice(0,150) || ""}...</div>
             </div>
           `;
         });
-
         container.innerHTML = html;
-      })
-      .catch(err => {
-        document.getElementById("news").innerHTML = "<p>Lỗi tải tin tức!</p>";
+      } catch (err) {
         console.error(err);
-      });
+        document.getElementById("news").innerHTML = "<p>Lỗi tải tin từ FXStreet-VN.</p>";
+      }
+    }
+    loadXAUNews();
   </script>
 </body>
 </html>
