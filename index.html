@@ -6,84 +6,87 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f5f5f5;
+      background: #f4f4f4;
       margin: 0;
+      padding: 0;
     }
-    h1 {
-      text-align: center;
+    header {
       background: #222;
-      color: white;
+      color: #fff;
       padding: 15px;
-      margin: -20px -20px 20px -20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
     }
-    #feed {
+    .container {
+      padding: 20px;
       max-width: 900px;
       margin: auto;
     }
     .news {
-      background: white;
-      margin: 15px 0;
+      background: #fff;
       padding: 15px;
+      margin-bottom: 15px;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       display: flex;
-      gap: 15px;
       align-items: flex-start;
     }
     .news img {
-      width: 140px;
-      height: auto;
-      border-radius: 6px;
-      object-fit: cover;
-    }
-    .content {
-      flex: 1;
+      max-width: 120px;
+      margin-right: 15px;
+      border-radius: 5px;
     }
     .news a {
       text-decoration: none;
       color: #0077cc;
-      font-weight: bold;
       font-size: 18px;
+      font-weight: bold;
     }
     .news a:hover {
-      color: #d2691e;
+      color: #ff6600;
     }
     .date {
-      color: gray;
-      font-size: 0.9em;
-      margin: 5px 0;
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
     }
     .desc {
       font-size: 14px;
-      color: #333;
+      color: #444;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Tin tức Vàng từ FXStreet</h1>
-  <div id="feed">Đang tải...</div>
+  <header>Tin tức Vàng từ FXStreet</header>
+  <div class="container" id="news"></div>
 
   <script>
-    async function loadRSS() {
-      const rssUrl = "https://www.fxstreet.com/rss/quotes/gold";
-      const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+    const rssUrl = "https://www.fxstreet.com/rss/news";
+    const apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
 
-      try {
-        let response = await fetch(api);
-        let data = await response.json();
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("news");
+        let html = "";
 
-        if (!data.items) {
-          document.getElementById("feed").innerHTML = "Không có tin tức!";
+        const goldNews = data.items.filter(item => 
+          item.title.toLowerCase().includes("gold") || 
+          item.title.toUpperCase().includes("XAU")
+        );
+
+        if (goldNews.length === 0) {
+          container.innerHTML = "<p>Không có tin tức về vàng!</p>";
           return;
         }
 
-        let html = "";
-        data.items.slice(0, 10).forEach(item => {
+        goldNews.slice(0, 10).forEach(item => {
           html += `
             <div class="news">
               ${item.thumbnail ? `<img src="${item.thumbnail}" alt="thumbnail">` : ""}
-              <div class="content">
+              <div>
                 <a href="${item.link}" target="_blank">${item.title}</a>
                 <div class="date">${new Date(item.pubDate).toLocaleString("vi-VN")}</div>
                 <div class="desc">${item.description || "Không có mô tả."}</div>
@@ -92,14 +95,12 @@
           `;
         });
 
-        document.getElementById("feed").innerHTML = html;
-      } catch (e) {
-        document.getElementById("feed").innerHTML = "Không tải được RSS feed!";
-        console.error(e);
-      }
-    }
-
-    loadRSS();
+        container.innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById("news").innerHTML = "<p>Lỗi tải tin tức!</p>";
+        console.error(err);
+      });
   </script>
 </body>
 </html>
