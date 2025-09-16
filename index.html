@@ -1,3 +1,57 @@
-<h2><a href="https://www.fxstreet-vn.com/news?q=v%C3%A0ng&hPP=20&idx=FxsIndexPro&p=0&Category=News" target="_blank">
-Xem tin tức vàng trên FXStreet
-</a></h2>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tin tức Vàng từ FXStreet</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; }
+    .news { background: white; margin: 10px 0; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .news a { text-decoration: none; color: #0077cc; font-weight: bold; }
+    .news a:hover { color: #d2691e; }
+    .date { color: gray; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>Tin tức Vàng từ FXStreet</h1>
+  <div id="feed"></div>
+
+  <script>
+    async function loadRSS() {
+      const url = "https://www.fxstreet.com/rss/quotes/gold";
+      const api = "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+
+      try {
+        let response = await fetch(api);
+        let data = await response.json();
+        let parser = new DOMParser();
+        let xml = parser.parseFromString(data.contents, "text/xml");
+
+        let items = xml.querySelectorAll("item");
+        let html = "";
+        items.forEach((el, i) => {
+          if (i < 10) { // lấy 10 tin mới nhất
+            let title = el.querySelector("title").textContent;
+            let link = el.querySelector("link").textContent;
+            let pubDate = el.querySelector("pubDate").textContent;
+
+            html += `
+              <div class="news">
+                <a href="${link}" target="_blank">${title}</a>
+                <div class="date">${pubDate}</div>
+              </div>
+            `;
+          }
+        });
+
+        document.getElementById("feed").innerHTML = html;
+      } catch (e) {
+        document.getElementById("feed").innerHTML = "Không tải được RSS feed!";
+        console.error(e);
+      }
+    }
+
+    loadRSS();
+  </script>
+</body>
+</html>
