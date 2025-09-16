@@ -33,7 +33,7 @@
         // sắp xếp theo pubDate mới nhất
         goldNews.sort((a, b) => new Date(b.querySelector("pubDate").textContent) - new Date(a.querySelector("pubDate").textContent));
 
-        // lấy 3 tin mới nhất
+        // lấy tối đa 3 tin
         goldNews = goldNews.slice(0, 3);
 
         const container = document.getElementById("news");
