@@ -1,64 +1,43 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Tin tức XAU/USD từ FXStreet-VN</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-    header { background: #222; color: #fff; padding: 15px; text-align: center; font-size: 22px; }
-    .container { max-width: 900px; margin: auto; padding: 20px; }
-    .news { background: #fff; margin-bottom: 15px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .news a { font-size: 18px; color: #0077cc; text-decoration: none; font-weight: bold; }
-    .date { font-size: 12px; color: #666; margin-top: 5px; }
-    .desc { font-size: 14px; color: #444; margin-top: 10px; }
-  </style>
-</head>
-<body>
-  <header>3 Tin tức mới nhất về Vàng (XAU/USD)</header>
-  <div class="container" id="news">Đang tải...</div>
+<div id="news"></div>
 
-  <script>
-    async function loadXAUNews() {
-      const rssUrl = "https://www.fxstreet-vn.com/rss/news";
-      const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
-      try {
-        let resp = await fetch(api);
-        let data = await resp.json();
-        let items = data.items || [];
+<script>
+async function loadNews() {
+  const rssUrl = "https://www.fxstreet.com/rss/news";
+  const response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(rssUrl));
+  const data = await response.json();
+  const xml = new DOMParser().parseFromString(data.contents, "text/xml");
+  const items = Array.from(xml.querySelectorAll("item"));
 
-        // 🔎 Lọc tin vàng
-        let goldNews = items.filter(item => {
-          const t = item.title.toLowerCase();
-          return t.includes("vàng") || t.includes("xau") || t.includes("gold");
-        });
+  // lọc chỉ tin vàng
+  let goldNews = items.filter(item => {
+    const t = item.querySelector("title").textContent.toLowerCase();
+    return t.includes("xau") || t.includes("vàng") || t.includes("gold");
+  });
 
-        // Chỉ lấy tối đa 3 tin
-        goldNews = goldNews.slice(0, 3);
+  // sắp xếp theo pubDate mới nhất
+  goldNews.sort((a, b) => new Date(b.querySelector("pubDate").textContent) - new Date(a.querySelector("pubDate").textContent));
 
-        const container = document.getElementById("news");
-        if (goldNews.length === 0) {
-          container.innerHTML = "<p>Không tìm thấy tin vàng nào!</p>";
-          return;
-        }
+  // lấy 3 tin mới nhất
+  goldNews = goldNews.slice(0, 3);
 
-        let html = "";
-        goldNews.forEach(item => {
-          html += `
-            <div class="news">
-              <a href="${item.link}" target="_blank">${item.title}</a>
-              <div class="date">${new Date(item.pubDate).toLocaleString("vi-VN")}</div>
-              <div class="desc">${item.description?.slice(0,150) || ""}...</div>
-            </div>
-          `;
-        });
+  // render
+  const container = document.getElementById("news");
+  container.innerHTML = goldNews.map(item => {
+    const title = item.querySelector("title").textContent;
+    const link = item.querySelector("link").textContent;
+    const pubDate = new Date(item.querySelector("pubDate").textContent).toLocaleString("vi-VN");
+    return `
+      <div style="margin-bottom:10px;">
+        <a href="${link}" target="_blank"><b>${title}</b></a><br>
+        <small>🕒 ${pubDate}</small>
+      </div>
+    `;
+  }).join("");
+}
 
-        container.innerHTML = html;
-      } catch (err) {
-        console.error(err);
-        document.getElementById("news").innerHTML = "<p>Lỗi tải tin từ FXStreet-VN.</p>";
-      }
-    }
-    loadXAUNews();
-  </script>
-</body>
-</html>
+// load lần đầu
+loadNews();
+
+// auto refresh mỗi 5 phút
+setInterval(loadNews, 5 * 60 * 1000);
+</script>
