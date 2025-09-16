@@ -36,7 +36,7 @@
           return;
         }
         let html = "";
-        filtered.slice(0, 10).forEach(item => {
+        filtered.slice(0, 3).forEach(item => {   // 👉 chỉ lấy 3 tin mới nhất
           html += `
             <div class="news">
               <a href="${item.link}" target="_blank">${item.title}</a>
