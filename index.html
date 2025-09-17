@@ -1,55 +1,211 @@
-<!DOCTYPE html>
+<!--
+Simple Forex/EA Blog Template
+- Single-file HTML + CSS + minimal JS
+- Just replace text/images and add your posts in the <main> area or the `posts` array in the script
+- Upload this file to your GitHub repo root and enable GitHub Pages (branch main, /root)
+-->
+
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Tin vàng mới nhất FXStreet</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #fdf6e3; }
-  h1 { color: #b58900; }
-  ul { list-style: none; padding: 0; }
-  li { margin-bottom: 10px; }
-  a { text-decoration: none; color: #268bd2; }
-  a:hover { text-decoration: underline; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EA & Forex Blog - Tên bạn</title>
+  <meta name="description" content="Blog chia sẻ EA, indicator, tips trading">
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#98a2b3;--accent:#00b894}
+    *{box-sizing:border-box}
+    body{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;margin:0;background:linear-gradient(180deg,#081019 0%,#071321 100%);color:#e6eef6}
+    header{background:transparent;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.03);position:sticky;top:0;backdrop-filter: blur(6px);z-index:20}
+    .container{max-width:1000px;margin:0 auto}
+    .nav{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#1dd1a1);display:flex;align-items:center;justify-content:center;font-weight:700;color:#042021}
+    nav a{color:var(--muted);text-decoration:none;margin-left:14px}
+    .hero{padding:36px 20px}
+    .hero-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+    .card{background:rgba(255,255,255,0.02);padding:18px;border-radius:12px}
+    h1{margin:0 0 8px;font-size:22px}
+    p.lead{color:var(--muted);margin:6px 0 0}
+    .posts{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+    .post{display:flex;gap:12px;align-items:center}
+    .thumb{width:110px;height:70px;border-radius:8px;flex-shrink:0;background:#081823;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+    .post-title{font-weight:600}
+    .meta{color:var(--muted);font-size:13px}
+    aside .card h3{margin:0 0 8px}
+    .cta{display:inline-block;padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#2ed573);color:#042021;text-decoration:none;font-weight:600}
+    footer{padding:28px 20px;margin-top:34px;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+    /* Responsive */
+    @media (max-width:880px){.hero-grid{grid-template-columns:1fr;}.thumb{width:90px;height:64px}.logo{width:40px;height:40px}}
+
+    /* simple post content styles */
+    article.blog{background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;margin-top:18px}
+    article.blog h2{margin-top:0}
+    .tags{display:flex;gap:8px;margin-top:12px}
+    .tag{font-size:13px;background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;color:var(--muted)}
+  </style>
 </head>
 <body>
-<h1>Tin vàng mới nhất FXStreet</h1>
-<ul id="newsList">Đang tải tin...</ul>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">EA</div>
+        <div>
+          <div style="font-weight:700">Tên bạn</div>
+          <div style="font-size:13px;color:var(--muted)">Forex · EA · Tools</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#home">Trang chủ</a>
+        <a href="#posts">Bài viết</a>
+        <a href="#ea">EA</a>
+        <a href="#tools">Tool</a>
+        <a href="#contact">Liên hệ</a>
+      </nav>
+    </div>
+  </header>
 
-<script>
-const RSS_URL = "https://www.fxstreet.com/rss/news";
-const CORS_PROXY = "https://corsproxy.io/?key=ad796910&url=";
+  <main class="container hero" id="home">
+    <div class="hero-grid">
+      <div>
+        <div class="card">
+          <h1>Chào mừng đến với Blog EA & Forex</h1>
+          <p class="lead">Chia sẻ chiến lược, indicator, EA và công cụ nhỏ dành cho trader. Bạn có thể chỉnh sửa nhanh nội dung trong file HTML này.</p>
 
-async function loadNews() {
-  try {
-    const response = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
-    const data = await response.text();
+          <div class="posts" id="posts-list">
+            <!-- JS sẽ render danh sách bài viết ở đây. Thay bằng HTML tĩnh nếu thích -->
+          </div>
 
-    // Parse XML RSS
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data, "application/xml");
-    const items = xml.querySelectorAll("item");
+        </div>
 
-    const ul = document.getElementById("newsList");
-    ul.innerHTML = "";
+        <!-- sample article area (hidden by default) -->
+        <div id="article" style="display:none">
+          <article class="blog card">
+            <h2 id="article-title">Tiêu đề bài viết</h2>
+            <p class="meta" id="article-date">Ngày đăng • tác giả</p>
+            <div id="article-content">
+              <p>Nội dung bài viết mẫu. Thay bằng nội dung thật của bạn.</p>
+            </div>
+            <div class="tags" id="article-tags"></div>
+          </article>
+          <div style="margin-top:10px"><a href="#home" class="cta" onclick="showHome();return false">Quay lại</a></div>
+        </div>
 
-    items.forEach((item, index) => {
-      if (index >= 10) return; // Chỉ lấy 10 tin mới nhất
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = item.querySelector("link").textContent;
-      a.target = "_blank";
-      a.textContent = item.querySelector("title").textContent;
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-  } catch (e) {
-    document.getElementById("newsList").textContent = "Không tải được tin.";
-    console.error(e);
-  }
-}
+      </div>
 
-loadNews();
-</script>
+      <aside>
+        <div class="card">
+          <h3>Giới thiệu nhanh</h3>
+          <p class="meta">Bạn là ai. Viết vài dòng ngắn về dịch vụ EA, support, hoặc bán áo thun trading :)</p>
+          <p style="margin-top:12px"><a class="cta" href="#contact">Liên hệ / Mua EA</a></p>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <h3>Top EA (mẫu)</h3>
+          <ul style="padding-left:16px;margin:0;"> 
+            <li><strong>MA9+MA21 Breakout</strong> — demo</li>
+            <li><strong>False Breakout</strong> — demo</li>
+            <li><strong>RSI Filter EA</strong> — demo</li>
+          </ul>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <h3>Tools</h3>
+          <p class="meta">Lot calculator, Time converter, Backtest gallery</p>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- EA list section -->
+    <section id="ea" style="margin-top:18px">
+      <div class="card">
+        <h2>Danh sách EA / Indicator</h2>
+        <p class="meta">Để tải: thêm link tới GitHub Releases, Gumroad, hoặc MQL5.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+          <!-- EA cards -->
+          <div class="card" style="min-width:220px;"> 
+            <strong>EA Demo 1</strong>
+            <p class="meta">MA9 cắt MA21, TP/SL theo USD</p>
+            <p style="margin-top:8px"><a class="cta" href="#">Download</a></p>
+          </div>
+          <div class="card" style="min-width:220px;"> 
+            <strong>EA Demo 2</strong>
+            <p class="meta">False breakout, Range TP/SL</p>
+            <p style="margin-top:8px"><a class="cta" href="#">Download</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- contact -->
+    <section id="contact" style="margin-top:18px">
+      <div class="card">
+        <h2>Liên hệ</h2>
+        <p class="meta">Email / PayPal / Momo / Link bán hàng</p>
+        <p style="margin-top:8px">Bạn có thể dùng <strong>Formspree</strong> hoặc Google Form để nhận message vì GitHub Pages không có backend.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:700">Tên bạn</div>
+          <div class="meta">EA · Forex · Tools</div>
+        </div>
+        <div class="meta">© <span id="year"></span> All rights reserved</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // SAMPLE POSTS - thay hoặc thêm bài viết bằng cách sửa mảng này
+    const posts = [
+      {id:1,title:'Hướng dẫn cài MT4 và chạy EA',date:'2025-09-18',excerpt:'Cài MT4, bật AutoTrading, nạp EA vào thư mục MQL4/Experts',tags:['MT4','EA']},
+      {id:2,title:'Chiến lược MA9+MA21 (giới thiệu)',date:'2025-09-17',excerpt:'Ý tưởng MA9 cắt MA21 + breakout',tags:['MA','Breakout']},
+      {id:3,title:'Công cụ Lot Calculator',date:'2025-09-15',excerpt:'Tính lot theo rủi ro và tài khoản',tags:['Tool']}
+    ];
+
+    const postsList = document.getElementById('posts-list');
+    function renderPosts(){
+      postsList.innerHTML = '';
+      posts.forEach(p=>{
+        const el = document.createElement('div'); el.className='post card';
+        el.innerHTML = `
+          <div class="thumb">PNG</div>
+          <div style="flex:1">
+            <div class="post-title">${p.title}</div>
+            <div class="meta">${p.date} • ${p.excerpt}</div>
+            <div style="margin-top:8px"><a href="#" class="cta" onclick="openPost(${p.id});return false">Đọc</a></div>
+          </div>
+        `;
+        postsList.appendChild(el);
+      });
+    }
+
+    function openPost(id){
+      const post = posts.find(x=>x.id===id);
+      if(!post) return;
+      document.getElementById('article-title').innerText = post.title;
+      document.getElementById('article-date').innerText = post.date + ' • Admin';
+      document.getElementById('article-content').innerHTML = `<p>${post.excerpt}</p><p>Nội dung chi tiết... (thay ở đây)</p>`;
+      const tagsDiv = document.getElementById('article-tags'); tagsDiv.innerHTML='';
+      (post.tags||[]).forEach(t=>{ const s=document.createElement('div'); s.className='tag'; s.innerText=t; tagsDiv.appendChild(s)});
+      document.getElementById('posts-list').parentElement.style.display='none';
+      document.getElementById('article').style.display='block';
+      window.scrollTo(0,0);
+    }
+    function showHome(){ document.getElementById('posts-list').parentElement.style.display='block'; document.getElementById('article').style.display='none'; window.scrollTo(0,0);} 
+
+    document.getElementById('year').innerText = new Date().getFullYear();
+    renderPosts();
+  </script>
 </body>
 </html>
