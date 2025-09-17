@@ -1,23 +1,139 @@
-const posts = [
-  {
-    id:1,
-    title:'Hướng dẫn cài MT4 và chạy EA',
-    date:'2025-09-18',
-    excerpt:'Cách cài MT4, bật AutoTrading, thêm EA vào thư mục Experts…',
-    tags:['MT4','EA','Hướng dẫn']
-  },
-  {
-    id:2,
-    title:'Chiến lược MA9 + MA21 Breakout',
-    date:'2025-09-17',
-    excerpt:'Ý tưởng: dùng đường MA9 cắt MA21 kết hợp breakout vùng hỗ trợ/kháng cự.',
-    tags:['MA','Breakout','Chiến lược']
-  },
-  {
-    id:3,
-    title:'Cách sử dụng Lot Calculator để quản lý rủi ro',
-    date:'2025-09-15',
-    excerpt:'Tính Lot theo % tài khoản, cách đặt SL/TP hợp lý để bảo vệ vốn.',
-    tags:['Tool','Risk Management']
-  }
-];
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EA & Forex Blog - Danh sách bài viết" />
+  <title>Bài viết - EA & Forex Blog</title>
+  <style>
+    /* ===== Reset & Fonts ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #0d1117;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+    a {
+      color: #00d084;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    /* ===== Header ===== */
+    header {
+      background: #161b22;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #30363d;
+    }
+    header h1 {
+      color: #00d084;
+      font-size: 22px;
+    }
+    nav a {
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    /* ===== Posts Section ===== */
+    .posts {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .post-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .post-card h2 {
+      color: #00d084;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .post-meta {
+      font-size: 14px;
+      color: #8b949e;
+      margin-bottom: 10px;
+    }
+    .post-excerpt {
+      color: #c9d1d9;
+      margin-bottom: 15px;
+    }
+    .read-btn {
+      display: inline-block;
+      padding: 8px 15px;
+      background: #00d084;
+      color: #0d1117;
+      border-radius: 5px;
+      font-weight: bold;
+      width: 100px;
+      text-align: center;
+    }
+    .read-btn:hover {
+      background: #00b36b;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #8b949e;
+      border-top: 1px solid #30363d;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <h1>EA & Forex Blog</h1>
+    <nav>
+      <a href="index.html">Trang chủ</a>
+      <a href="posts.html">Bài viết</a>
+      <a href="#">EA</a>
+      <a href="#">Tool</a>
+      <a href="#">Liên hệ</a>
+    </nav>
+  </header>
+
+  <!-- ===== Posts Section ===== -->
+  <section class="posts">
+    <div class="post-card">
+      <h2>Hướng dẫn cài MT4 và chạy EA</h2>
+      <div class="post-meta">2025-09-18 • MT4, EA, Hướng dẫn</div>
+      <div class="post-excerpt">Cách cài MT4, bật AutoTrading, thêm EA vào thư mục MQL4/Experts…</div>
+      <a class="read-btn" href="#">Đọc</a>
+    </div>
+
+    <div class="post-card">
+      <h2>Chiến lược MA9 + MA21 Breakout</h2>
+      <div class="post-meta">2025-09-17 • MA, Breakout, Chiến lược</div>
+      <div class="post-excerpt">Ý tưởng: dùng đường MA9 cắt MA21 kết hợp breakout vùng hỗ trợ/kháng cự.</div>
+      <a class="read-btn" href="#">Đọc</a>
+    </div>
+
+    <div class="post-card">
+      <h2>Cách sử dụng Lot Calculator để quản lý rủi ro</h2>
+      <div class="post-meta">2025-09-15 • Tool, Risk Management</div>
+      <div class="post-excerpt">Tính Lot theo % tài khoản, cách đặt SL/TP hợp lý để bảo vệ vốn.</div>
+      <a class="read-btn" href="#">Đọc</a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 EA & Forex Blog | Thiết kế bởi Bạn
+  </footer>
+
+</body>
+</html>
