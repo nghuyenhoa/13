@@ -70,6 +70,10 @@
       padding: 20px;
       border-radius: 10px;
       border: 1px solid #30363d;
+      transition: background 0.3s ease;
+    }
+    .card:hover {
+      background: #1f242d;
     }
     .card h3 {
       color: #00d084;
@@ -85,6 +89,12 @@
       color: #8b949e;
       border-top: 1px solid #30363d;
       margin-top: 40px;
+    }
+    /* Làm thẻ a bao trọn card không đổi màu chữ */
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
   </style>
 </head>
@@ -110,14 +120,19 @@
 
   <!-- ===== Features Section ===== -->
   <section class="features">
-    <div class="card">
-      <h3>Chiến lược Forex</h3>
-      <p>Học các chiến lược mới: MA cross, breakout, RSI, vùng cản…</p>
-    </div>
+    <!-- Card Chiến lược Forex có link -->
+    <a href="chien-luoc-forex.html" class="card-link">
+      <div class="card">
+        <h3>Chiến lược Forex</h3>
+        <p>Học các chiến lược mới: MA cross, breakout, RSI, vùng cản…</p>
+      </div>
+    </a>
+
     <div class="card">
       <h3>EA & Tool</h3>
       <p>Các EA miễn phí hoặc trả phí, tool tính lot, quản lý rủi ro.</p>
     </div>
+
     <div class="card">
       <h3>Shop Áo Thun Trader</h3>
       <p>Áo thun in quote trading độc đáo – ủng hộ tác giả blog.</p>
