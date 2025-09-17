@@ -2,37 +2,39 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Tin FXStreet RSS</title>
+<title>Tin vàng mới nhất FXStreet</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #fdf6e3; }
-h1 { color: #b58900; }
-ul { list-style: none; padding: 0; }
-li { margin-bottom: 10px; }
-a { text-decoration: none; color: #268bd2; }
-a:hover { text-decoration: underline; }
+  body { font-family: Arial, sans-serif; padding: 20px; background: #fdf6e3; }
+  h1 { color: #b58900; }
+  ul { list-style: none; padding: 0; }
+  li { margin-bottom: 10px; }
+  a { text-decoration: none; color: #268bd2; }
+  a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-<h1>Tin FXStreet RSS</h1>
+<h1>Tin vàng mới nhất FXStreet</h1>
 <ul id="newsList">Đang tải tin...</ul>
 
 <script>
-const CORS_PROXY = "https://api.allorigins.win/get?url=";
 const RSS_URL = "https://www.fxstreet.com/rss/news";
+const CORS_PROXY = "https://corsproxy.io/?key=ad796910&url=";
 
-async function loadRSS() {
+async function loadNews() {
   try {
-    const res = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
-    const data = await res.json();
+    const response = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
+    const data = await response.text();
+
+    // Parse XML RSS
     const parser = new DOMParser();
-    const xml = parser.parseFromString(data.contents, "application/xml");
+    const xml = parser.parseFromString(data, "application/xml");
     const items = xml.querySelectorAll("item");
 
     const ul = document.getElementById("newsList");
     ul.innerHTML = "";
 
     items.forEach((item, index) => {
-      if (index >= 10) return; // chỉ lấy 10 tin mới
+      if (index >= 10) return; // Chỉ lấy 10 tin mới nhất
       const li = document.createElement("li");
       const a = document.createElement("a");
       a.href = item.querySelector("link").textContent;
@@ -47,7 +49,7 @@ async function loadRSS() {
   }
 }
 
-loadRSS();
+loadNews();
 </script>
 </body>
 </html>
